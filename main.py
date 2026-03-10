@@ -386,7 +386,7 @@ def main(config, config_path):
                     loss_toal = zsn2n_cross_loss(model, D1, D2,noisy_img, epoch+1).item() +loss_up
                 logging.info(f"Image {filename}, Epoch {epoch+1}/{max_epoch}, ,zs_loss: {loss_toal:.4f}  ,up_loss:{loss_up:.4f} ,lam_1 :{lam_1}")
 
-            scheduler.step()  # 主训练阶段的学习率调度
+            scheduler.step()  
 
         # Test the trained model
         final_psnr, denoised_img, ssim ,pred_noisy= test_pipeline(model, noisy_img,
