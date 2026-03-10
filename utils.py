@@ -102,7 +102,7 @@ def ssim_torch(img1, img2, window_size=11, window=None, size_average=True):
         window_size : int
             
         window : torch.Tensor
-            预计算的窗口 (避免重复计算)
+            
         ssim_score : torch.Tensor
             SSIM 
     """
