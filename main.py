@@ -57,21 +57,21 @@ def load_config(config_path):
 class DifferentiableRadius(nn.Module):
     def __init__(self, init_ratio=0.2, min_ratio=0.1, max_ratio=0.5):
         """
-        init_ratio: 初始半径比例 (0-1)
-        min_ratio: 最小半径比例 (防止消失)
-        max_ratio: 最大半径比例
+        init_ratio
+        min_ratio
+        max_ratio
         """
         super().__init__()
         self.min_ratio = min_ratio
         self.max_ratio = max_ratio
         
-        # 初始化参数确保在合理范围内
+        
         initial_value = torch.tensor(init_ratio)
         self.log_ratio = nn.Parameter(torch.log(initial_value / (1 - initial_value + 1e-8)))
     
     @property
     def radius_ratio(self):
-        # 使用 sigmoid + 缩放确保值在 [min_ratio, max_ratio] 范围
+        
         sigmoid_ratio = torch.sigmoid(self.log_ratio)
         return self.min_ratio + (self.max_ratio - self.min_ratio) * sigmoid_ratio
     
@@ -165,50 +165,6 @@ def train_pipeline(model, optimizer, D1, D2,noisy_img, lam_1,up_D1,up_D2):
     optimizer.step()
     return loss.item()
 
-# def train_pipeline(model, optimizer, D1, D2,noisy_img, lam_1,lam_2,up_D1,up_D2):
-#     model.train()
-
-#     loss_zs = zsn2n_cross_loss(model, D1, D2, noisy_img, lam_1,lam_2)
-#     loss_up = up_loss(model ,up_D1,up_D2 , lam_1) 
-    
-#     loss =   loss_up + loss_zs
-#     optimizer.zero_grad()
-#     loss.backward()
-#     optimizer.step()
-#     return loss.item()
-    
-# def train_pipeline(model, optimizer,D1,D2,D3,D4,mask1,mask2,up_D3,up_D4, noisy_img):
-#     model.train()
-#     loss = frequency_domain_loss_2(model,D1,D2,D3,D4,mask1,mask2,up_D3,up_D4, noisy_img)
-#     optimizer.zero_grad()
-#     loss.backward()
-#     optimizer.step()
-#     return loss.item()
-
-
-# def bsn_train(model ,optimizer, noisy , D1 ,D2  ,up_D1 ,up_D2 , step ,k):
-#     model.train()
-#     D1_s2s ,D1_mask = get_gridded_data_neighbor_replace_v2(D1,step )
-#     D2_s2s , D2_mask = get_gridded_data_neighbor_replace_v2(D2,step )
-#     blit_up_D1,up_D1_mask = get_gridded_data_neighbor_replace_v2(up_D1 ,step)
-#     D1_pred = model(D1 )
-#     D2_pred = model(D2)
-#     up_pred = model(up_D1)
-    
-#     # global_D1 = model(D1 )
-#     # global_D2 = model(D2 , 'global')
-#     # global_up_D1 = model(up_D1 , 'global')
-#     loss_1 =1/2 * ( mse(D1_pred  ,D2 ) + mse(D2_pred  ,D1 ))
-#     loss_up =1/2 * (mse(up_pred , up_D2 ))
-    
-#     # global_res =(loss_1 + loss_up) + 1/2 * (mse(global_D1 , D2) + mse(global_D2 , D1))
-#     # global_up_res = (mse(global_up_D1 , up_D2))
-    
-#     loss = (loss_1+loss_up )
-#     optimizer.zero_grad()
-#     loss.backward()
-#     optimizer.step()
-#     return loss.item()
     
 def test_psnr(pred, gt):
     with torch.no_grad():
@@ -237,16 +193,6 @@ def test_pipeline(model, noisy_img, clean_img):
         ssim = ssim_torch(clean_img, denoised_img).item()
     return psnr_val, denoised_img, ssim ,pred_noise
 
-# def test_pipeline(model, noisy_img, clean_img):
-#     model.eval()
-#     with torch.no_grad():
-#         pred_noise = model(noisy_img )
-#         denoised_img = torch.clamp( pred_noise, 0, 1)
-#         mse_val = mse(clean_img, denoised_img).item()
-#         psnr_val = 10 * np.log10(1 /
-#                                  mse_val) if mse_val > 1e-10 else float('inf')
-#         ssim = ssim_torch(clean_img, denoised_img).item()
-#     return psnr_val, denoised_img, ssim , noisy_img - pred_noise
 
 # --- Main Training Orchestration ---
 def main(config, config_path):
@@ -262,10 +208,7 @@ def main(config, config_path):
                     exist_ok=True)
         os.makedirs(osp.join(results_path, experiment_name, 'denoised'),
                     exist_ok=True)
-        # os.makedirs(osp.join(results_path, experiment_name, 'denoised_first'),
-        #             exist_ok=True)
-        # os.makedirs(osp.join(results_path, experiment_name, 'denoised_sec'),
-        #             exist_ok=True)
+
         os.makedirs(osp.join(results_path, experiment_name, 'pred_noisy'),
                     exist_ok=True)
         logging.info(f"Images will be saved to: {results_path}")
@@ -273,20 +216,7 @@ def main(config, config_path):
         logging.info(
             "No images will be saved. Set 'is_save' to True in config to enable saving."
         )
-    # run = wandb.init(
-    #     # Set the wandb entity where your project will be logged (generally your team name).
-    #     entity="yuyumao99-southwest-jiaotong-university",
-    #     name=time.strftime('%m%d%H%M%S'),
-    #     # Set the wandb project where this run will be logged.
-    #     project="ZS-N2N",
-    #     # Track hyperparameters and run metadata.
-    #     config={
-    #         "learning_rate": 0.0005,
-    #         "architecture": "ZS-N2N",
-    #         "dataset": "./datasets\Gaussion\Kodak24",
-    #         "epochs": 100,
-    #     },
-    # )
+
     log_file_path = osp.join(results_path, experiment_name,
                              f"{experiment_name}_{get_time_str()}.log")
     os.makedirs(osp.dirname(log_file_path), exist_ok=True)
