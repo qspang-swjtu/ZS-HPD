@@ -176,7 +176,7 @@ If you find this project useful, please cite our paper:
 ```bibtex
 @inproceedings{zshpd2026,
   title     = {Zero-Shot Image Denoising via Hybrid Prior-Guided Pseudo Sample Generation},
-  author    = {Xiaole Zhao ⋅ Qingsong Pang ⋅ Xiaobo Zhang ⋅ Xun Xu ⋅ Xun Gong ⋅ Yan Yang ⋅ Tianrui Li},
+  author    = {Xiaole Zhao, Qingsong Pang, Xiaobo Zhang, Xun Xu, Xun Gong, Yan Yang, Tianrui Li},
   booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
   year      = {2026}
 }
