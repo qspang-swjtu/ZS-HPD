@@ -1,0 +1,28 @@
+# Paths and Logging Configuration
+[paths]
+name = "SIDD_fft" # Experiment name
+results_path = "./real_results"
+is_save = true
+dataset_gt_path = "./datasets/Realworld/SIDD/GT"
+dataset_noisy_path = "./datasets/Realworld/SIDD/Noisy"
+
+# Device Configuration
+[device]
+type = "auto" # choices: 'cuda', 'cpu', 'auto'
+
+
+# Training Hyperparameters Configuration
+[training]
+max_epoch = 1500
+lr = 0.0005
+step_size = 1000
+gamma = 0.5
+patch_size = 7
+sigma = 20
+M = 10
+num_random_candidates_per_anchor = 1024
+anchor_processing_batch_size = 1024
+similarity_metric = 'l1'
+
+[epoch]
+run_epoch = 1
