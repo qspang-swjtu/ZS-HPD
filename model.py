@@ -95,7 +95,9 @@ class network(nn.Module):
         
         self.conv3 = nn.Conv2d(chan_embed, chan_embed, 3, padding=1 )
         self.conv4 = nn.Conv2d(chan_embed, chan_embed, 3, padding=1 )
-        
+        self.conv5 = nn.Conv2d(chan_embed, chan_embed, 3, padding=1 )
+        self.conv6 = nn.Conv2d(chan_embed, chan_embed, 3, padding=1 )
+        self.conv7 = nn.Conv2d(chan_embed, chan_embed, 3, padding=1 )
         self.final = nn.Conv2d(chan_embed, n_chan, 1)
 
 
@@ -107,7 +109,9 @@ class network(nn.Module):
         x = self.act(self.conv3(x))
         
         x = self.act(self.conv4(x))
-        
+        x = self.act(self.conv5(x))
+        x = self.act(self.conv6(x))
+        x = self.act(self.conv7(x))
         x = self.final(x)
         
         return x + res
